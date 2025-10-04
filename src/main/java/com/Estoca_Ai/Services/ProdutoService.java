@@ -28,6 +28,26 @@ public class ProdutoService {
                 .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
         produtoRepository.delete(produto);
         return produto;
-
+    }
+    
+    public Produto editarProduto(int id, Produto produto){
+        Produto editarProduto = produtoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
+        if (produto.getNome() != null) {
+            editarProduto.setNome(produto.getNome());
+        }
+        if (produto.getPreco() != 0) {
+            editarProduto.setPreco(produto.getPreco());
+        }
+        if (produto.getDesconto() < 0) {
+            editarProduto.setDesconto(produto.getDesconto());
+        }
+        if (produto.getDescricao() != null) {
+            editarProduto.setDescricao(produto.getDescricao());
+        }
+        if (produto.getEstoque() != 0) {
+            editarProduto.setEstoque(produto.getEstoque());
+        }
+        return produtoRepository.save(editarProduto);
     }
 }

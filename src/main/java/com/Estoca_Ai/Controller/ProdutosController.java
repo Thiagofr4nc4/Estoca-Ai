@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+
+@RequestMapping("/Produtos")
 @RestController
 public class ProdutosController {
     private final ProdutoService produtoService;
@@ -29,4 +31,9 @@ public class ProdutosController {
             return ResponseEntity.ok().body(deletado);
         }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Produto> atualizarProduto(@PathVariable Integer id, @RequestBody Produto produto){
+        Produto atualizado = produtoService.editarProduto(id, produto);
+        return ResponseEntity.ok().body(atualizado);
+    }
 }
