@@ -19,7 +19,7 @@ public class ProdutoService {
         return produtoRepository.save(produto);
     }
 
-    public List<Produto> listProdutos(){
+    public List<Produto> listarProdutos(){
         return produtoRepository.findAll();
     }
 
@@ -45,7 +45,7 @@ public class ProdutoService {
         if (produto.getDescricao() != null) {
             editarProduto.setDescricao(produto.getDescricao());
         }
-        if (produto.getEstoque() != 0) {
+        if (produto.getEstoque() < 0) {
             editarProduto.setEstoque(produto.getEstoque());
         }
         return produtoRepository.save(editarProduto);
