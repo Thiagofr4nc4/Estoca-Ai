@@ -20,4 +20,6 @@ public class TransacoesService {
     public List<Transacoes> listarTransacoesSaida(String tipo){
         return  transacoesRepository.findByTipo(tipo);
     }
+
+    public List<Transacoes> listarTransacoesPorResponsavel(String responsavel){return  transacoesRepository.findByResponsavel(responsavel);}
 }

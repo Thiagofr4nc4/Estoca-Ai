@@ -50,4 +50,20 @@ public class ProdutoService {
         }
         return produtoRepository.save(editarProduto);
     }
+
+    public Produto criarProduto(Produto produto){
+        if (produto.getNome() == null || produto.getNome().trim().isEmpty()) {
+            throw new IllegalArgumentException("Nome do produto não pode ser vazio");
+        }
+
+        if (produto.getPreco() < 0) {
+            throw new IllegalArgumentException("Preço do produto não pode ser negativo");
+        }
+
+        if (produto.getEstoque() < 0) {
+            throw new IllegalArgumentException("Estoque não pode ser negativo");
+        }
+
+        return produtoRepository.save(produto);
+    }
 }

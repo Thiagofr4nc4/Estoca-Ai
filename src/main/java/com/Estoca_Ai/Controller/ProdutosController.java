@@ -3,13 +3,14 @@ package com.Estoca_Ai.Controller;
 
 import com.Estoca_Ai.Entity.Produto;
 import com.Estoca_Ai.Services.ProdutoService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 
-@RequestMapping("/Produtos")
+@RequestMapping("/Estoca-Ai")
 @RestController
 public class ProdutosController {
     private final ProdutoService produtoService;
@@ -23,15 +24,21 @@ public class ProdutosController {
             return produtoService.listarProdutos();
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("produtos/deletar-produto/{id}")
         public ResponseEntity<Produto> deletarProduto(@PathVariable Integer id){
             Produto deletado = produtoService.deletarProduto(id);
-            return ResponseEntity.ok().body(deletado);
+            return ResponseEntity.noContent().build();
         }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("produtos/atualizar-produto/{id}")
     public ResponseEntity<Produto> atualizarProduto(@PathVariable Integer id, @RequestBody Produto produto){
         Produto atualizado = produtoService.editarProduto(id, produto);
         return ResponseEntity.ok().body(atualizado);
+    }
+
+    @PostMapping("/produtos/Criar-produto")
+    public ResponseEntity<Produto> criarProduto(@RequestBody Produto produto){
+        Produto novoProduto = produtoService.criarProduto(produto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);
     }
 }
