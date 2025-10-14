@@ -10,13 +10,11 @@ import java.util.List;
 @Service
 public class ProdutoService {
     private final ProdutoRepository produtoRepository;
-    public ProdutoService(ProdutoRepository produtoRepository) {
-        this.produtoRepository = produtoRepository;
-    }
+    private final TransacoesService transacoesService;
 
-    public Produto addProduto(Produto produto){
-        if(produto.getPreco() < 0 ) throw new IllegalArgumentException("Preço não pode ser menor que 0");
-        return produtoRepository.save(produto);
+    public ProdutoService(ProdutoRepository produtoRepository, TransacoesService transacoesService) {
+        this.produtoRepository = produtoRepository;
+        this.transacoesService = transacoesService;
     }
 
     public List<Produto> listarProdutos(){
@@ -65,5 +63,28 @@ public class ProdutoService {
         }
 
         return produtoRepository.save(produto);
+    }
+
+    public Produto entradaProduto(String nome, int quantidade, String responsavel){
+        Produto produto = (Produto) produtoRepository.findByNome(nome);
+
+        produto.setEstoque(produto.getEstoque() + quantidade);
+        produtoRepository.save(produto);
+
+        transacoesService.registrarTransacoes("Entrada", produto, responsavel);
+
+        return produto;
+    }
+
+    public Produto saidaProduto(String nome, int quantidade, String responsavel){
+        Produto produto = produtoRepository.findByNome(nome);
+        if (produto.getEstoque() < quantidade){
+            throw new IllegalArgumentException("Quantidade não suficiente em estoque");
+        }
+        produto.setEstoque(produto.getEstoque() - quantidade);
+        produtoRepository.save(produto);
+
+        transacoesService.registrarTransacoes("Saida", produto, responsavel);
+        return produto;
     }
 }
