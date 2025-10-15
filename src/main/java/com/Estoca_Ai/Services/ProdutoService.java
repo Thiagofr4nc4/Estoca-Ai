@@ -71,7 +71,7 @@ public class ProdutoService {
         produto.setEstoque(produto.getEstoque() + quantidade);
         produtoRepository.save(produto);
 
-        transacoesService.registrarTransacoes("Entrada", produto, responsavel);
+        transacoesService.registrarTransacoes("Entrada", produto, responsavel, quantidade);
 
         return produto;
     }
@@ -84,7 +84,7 @@ public class ProdutoService {
         produto.setEstoque(produto.getEstoque() - quantidade);
         produtoRepository.save(produto);
 
-        transacoesService.registrarTransacoes("Saida", produto, responsavel);
+        transacoesService.registrarTransacoes("Saida", produto, responsavel, quantidade);
         return produto;
     }
 }

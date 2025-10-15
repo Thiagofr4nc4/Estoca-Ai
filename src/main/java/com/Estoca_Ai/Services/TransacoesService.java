@@ -25,12 +25,13 @@ public class TransacoesService {
 
     public List<Transacoes> listarTransacoesPorResponsavel(String responsavel){return  transacoesRepository.findByResponsavel(responsavel);}
 
-    public Transacoes registrarTransacoes(String tipo, Produto produto, String responsavel){
+    public Transacoes registrarTransacoes(String tipo, Produto produto, String responsavel, int quantidade){
         Transacoes registro = new Transacoes();
         registro.setTipo(tipo);
         registro.setResponsavel(responsavel);
         registro.setProduto(produto);
         registro.setData(LocalDateTime.now());
+        registro.setQuantidade(quantidade);
         return transacoesRepository.save(registro);
     }
 }

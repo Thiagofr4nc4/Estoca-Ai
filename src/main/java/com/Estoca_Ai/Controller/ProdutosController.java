@@ -41,4 +41,22 @@ public class ProdutosController {
         Produto novoProduto = produtoService.criarProduto(produto);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);
     }
+
+    @PatchMapping("/entrada")
+        public ResponseEntity<Produto> entradaProduto(
+                @RequestParam String nome,
+                @RequestParam int quantidade,
+                @RequestParam String responsavel){
+        Produto atualizado = produtoService.entradaProduto(nome, quantidade, responsavel);
+        return ResponseEntity.ok().body(atualizado);
+        }
+
+    @PatchMapping("/saida")
+        public ResponseEntity<Produto> saidaProduto(
+                @RequestParam String nome,
+                @RequestParam int quantidade,
+                @RequestParam String responsavel){
+        Produto atualizado = produtoService.saidaProduto(nome, quantidade, responsavel);
+        return ResponseEntity.ok().body(atualizado);
+    }
 }
