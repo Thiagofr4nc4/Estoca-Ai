@@ -25,5 +25,7 @@ public class Transacoes {
 
     private String responsavel;
 
+    private String solicitante;
+
 
 }

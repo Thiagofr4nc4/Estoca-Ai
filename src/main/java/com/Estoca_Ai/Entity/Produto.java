@@ -18,20 +18,8 @@ public class Produto {
     @Column(name = "nome", columnDefinition = "VARCHAR(255) NOT NULL")
     private String nome;
 
-    @Column(name = "descricao")
-    private String descricao;
-
-    @Column(name = "preco")
-    private int preco;
-
-    @Column(name = "desconto")
-    private int desconto;
-
     @Column(name = "estoque")
     private int estoque;
-
-    @Column(name = "validade")
-    private LocalDate validade;
 
     public Produto() {}
 

@@ -25,7 +25,20 @@ public class TransacoesService {
 
     public List<Transacoes> listarTransacoesPorResponsavel(String responsavel){return  transacoesRepository.findByResponsavel(responsavel);}
 
-    public Transacoes registrarTransacoes(String tipo, Produto produto, String responsavel, int quantidade){
+    public List<Transacoes> listarTransacoesPorSolicitante(String solicitante){return  transacoesRepository.findBySolicitante(solicitante);}
+
+    public Transacoes registrarSaida(String tipo, Produto produto, String responsavel, int quantidade, String solicitante){
+        Transacoes registro = new Transacoes();
+        registro.setTipo(tipo);
+        registro.setResponsavel(responsavel);
+        registro.setProduto(produto);
+        registro.setData(LocalDateTime.now());
+        registro.setQuantidade(quantidade);
+        registro.setSolicitante(solicitante);
+        return transacoesRepository.save(registro);
+    }
+
+    public Transacoes registrarEntrada(String tipo, Produto produto, String responsavel, int quantidade){
         Transacoes registro = new Transacoes();
         registro.setTipo(tipo);
         registro.setResponsavel(responsavel);

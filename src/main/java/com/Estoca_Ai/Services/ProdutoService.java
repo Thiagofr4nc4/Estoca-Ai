@@ -34,28 +34,13 @@ public class ProdutoService {
         if (produto.getNome() != null) {
             editarProduto.setNome(produto.getNome());
         }
-        if (produto.getPreco() != 0) {
-            editarProduto.setPreco(produto.getPreco());
-        }
-        if (produto.getDesconto() < 0) {
-            editarProduto.setDesconto(produto.getDesconto());
-        }
-        if (produto.getDescricao() != null) {
-            editarProduto.setDescricao(produto.getDescricao());
-        }
-        if (produto.getEstoque() < 0) {
-            editarProduto.setEstoque(produto.getEstoque());
-        }
+
         return produtoRepository.save(editarProduto);
     }
 
     public Produto criarProduto(Produto produto){
         if (produto.getNome() == null || produto.getNome().trim().isEmpty()) {
             throw new IllegalArgumentException("Nome do produto não pode ser vazio");
-        }
-
-        if (produto.getPreco() < 0) {
-            throw new IllegalArgumentException("Preço do produto não pode ser negativo");
         }
 
         if (produto.getEstoque() < 0) {
@@ -65,26 +50,26 @@ public class ProdutoService {
         return produtoRepository.save(produto);
     }
 
-    public Produto entradaProduto(String nome, int quantidade, String responsavel){
-        Produto produto = (Produto) produtoRepository.findByNome(nome);
+    public Produto entradaProduto(Long idProduto, int quantidade, String responsavel){
+        Produto produto = (Produto) produtoRepository.findById(idProduto);
 
         produto.setEstoque(produto.getEstoque() + quantidade);
         produtoRepository.save(produto);
 
-        transacoesService.registrarTransacoes("Entrada", produto, responsavel, quantidade);
+        transacoesService.registrarEntrada("Entrada", produto, responsavel, quantidade);
 
         return produto;
     }
 
-    public Produto saidaProduto(String nome, int quantidade, String responsavel){
-        Produto produto = produtoRepository.findByNome(nome);
+    public Produto saidaProduto(Long idProduto, int quantidade, String responsavel, String solicitante){
+        Produto produto = produtoRepository.findById(idProduto);
         if (produto.getEstoque() < quantidade){
             throw new IllegalArgumentException("Quantidade não suficiente em estoque");
         }
         produto.setEstoque(produto.getEstoque() - quantidade);
         produtoRepository.save(produto);
 
-        transacoesService.registrarTransacoes("Saida", produto, responsavel, quantidade);
+        transacoesService.registrarSaida("Saida", produto, responsavel, quantidade, solicitante);
         return produto;
     }
 }

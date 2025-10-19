@@ -44,19 +44,20 @@ public class ProdutosController {
 
     @PatchMapping("/entrada")
         public ResponseEntity<Produto> entradaProduto(
-                @RequestParam String nome,
+                @RequestParam Long idProduto,
                 @RequestParam int quantidade,
                 @RequestParam String responsavel){
-        Produto atualizado = produtoService.entradaProduto(nome, quantidade, responsavel);
+        Produto atualizado = produtoService.entradaProduto(idProduto, quantidade, responsavel);
         return ResponseEntity.ok().body(atualizado);
         }
 
     @PatchMapping("/saida")
         public ResponseEntity<Produto> saidaProduto(
-                @RequestParam String nome,
+                @RequestParam Long idProduto,
                 @RequestParam int quantidade,
-                @RequestParam String responsavel){
-        Produto atualizado = produtoService.saidaProduto(nome, quantidade, responsavel);
+                @RequestParam String responsavel,
+                @RequestParam String solicitante){
+        Produto atualizado = produtoService.saidaProduto(idProduto, quantidade, responsavel, solicitante);
         return ResponseEntity.ok().body(atualizado);
     }
 }

@@ -24,4 +24,7 @@ public class TransacoesController {
 
     @GetMapping("/Transacoes/Responsavel")
         public List<Transacoes> listarResponsavel(@RequestParam String nome){return transacoesService.listarTransacoesPorResponsavel(nome);}
+
+    @GetMapping("/Transacoes/Solicitante")
+        public List<Transacoes> listarSolicitante(@RequestParam String nome){return transacoesService.listarTransacoesPorSolicitante(nome);}
 }
