@@ -50,8 +50,16 @@ public class ProdutoService {
         return produtoRepository.save(produto);
     }
 
-    public Produto entradaProduto(Long idProduto, int quantidade, String responsavel){
-        Produto produto = (Produto) produtoRepository.findById(idProduto);
+    public Produto entradaProduto(int idProduto, int quantidade, String responsavel){
+        Produto produto = produtoRepository.findById(idProduto)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
+
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("A quantidade deve ser maior que zero");
+        }
+        if (responsavel == null || responsavel.trim().isEmpty()) {
+            throw new IllegalArgumentException("O responsável deve ser informado");
+        }
 
         produto.setEstoque(produto.getEstoque() + quantidade);
         produtoRepository.save(produto);
@@ -61,15 +69,30 @@ public class ProdutoService {
         return produto;
     }
 
-    public Produto saidaProduto(Long idProduto, int quantidade, String responsavel, String solicitante){
-        Produto produto = produtoRepository.findById(idProduto);
-        if (produto.getEstoque() < quantidade){
+    public Produto saidaProduto(int idProduto, int quantidade, String responsavel, String solicitante){
+        Produto produto = produtoRepository.findById(idProduto)
+                .orElseThrow(() -> new IllegalArgumentException("Produto não encontrado"));
+
+        if (quantidade <= 0) {
+            throw new IllegalArgumentException("A quantidade deve ser maior que zero");
+        }
+
+        if (produto.getEstoque() < quantidade) {
             throw new IllegalArgumentException("Quantidade não suficiente em estoque");
         }
+
+        if (responsavel == null || responsavel.trim().isEmpty()) {
+            throw new IllegalArgumentException("O responsável deve ser informado");
+        }
+
+        if (solicitante == null || solicitante.trim().isEmpty()) {
+            throw new IllegalArgumentException("O solicitante deve ser informado");
+        }
+
         produto.setEstoque(produto.getEstoque() - quantidade);
         produtoRepository.save(produto);
 
-        transacoesService.registrarSaida("Saida", produto, responsavel, quantidade, solicitante);
+        transacoesService.registrarSaida("Saída", produto, responsavel, quantidade, solicitante);
         return produto;
     }
 }

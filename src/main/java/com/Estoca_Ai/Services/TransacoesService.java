@@ -19,10 +19,6 @@ public class TransacoesService {
         return transacoesRepository.findAll();
     }
 
-    public List<Transacoes> listarTransacoesPorTipo(String tipo){
-        return  transacoesRepository.findByTipo(tipo);
-    }
-
     public List<Transacoes> listarTransacoesPorResponsavel(String responsavel){return  transacoesRepository.findByResponsavel(responsavel);}
 
     public List<Transacoes> listarTransacoesPorSolicitante(String solicitante){return  transacoesRepository.findBySolicitante(solicitante);}

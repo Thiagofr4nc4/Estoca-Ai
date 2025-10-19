@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("Estoca-Ai")
+@RequestMapping("estoca-ai")
 @RestController
 public class TransacoesController {
     private final TransacoesService transacoesService;
@@ -16,15 +16,12 @@ public class TransacoesController {
         this.transacoesService = transacoesService;
     }
 
-    @GetMapping("/Transacoes")
+    @GetMapping("/transacoes")
         public List<Transacoes> listarTransacoes(){return transacoesService.listarTransacoes();}
 
-    @GetMapping("/Transacoes/Tipo")
-        public List<Transacoes> listarPorTipo(@RequestParam String tipo){return transacoesService.listarTransacoesPorTipo(tipo);}
-
-    @GetMapping("/Transacoes/Responsavel")
+    @GetMapping("/transacoes/responsavel")
         public List<Transacoes> listarResponsavel(@RequestParam String nome){return transacoesService.listarTransacoesPorResponsavel(nome);}
 
-    @GetMapping("/Transacoes/Solicitante")
+    @GetMapping("/transacoes/solicitante")
         public List<Transacoes> listarSolicitante(@RequestParam String nome){return transacoesService.listarTransacoesPorSolicitante(nome);}
 }

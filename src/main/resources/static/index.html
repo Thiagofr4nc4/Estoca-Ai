@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Estoca-Ai</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+<div class="container my-5">
+    <h1 class="mb-4">📦 Estoque de Produtos</h1>
+    <div class="mt-4 mb-3">
+        <a href="transacoes.html" class="btn btn-info">Ir para Transações</a>
+    </div>
+    <button class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#produtoModal" onclick="abrirModalCriar()">Criar Produto</button>
+    <table class="table table-bordered" id="tabela-produtos">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Estoque</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Produtos serão inseridos aqui via JS -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Criar/Editar Produto -->
+<div class="modal fade" id="produtoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="form-produto">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitulo">Criar Produto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="produtoId">
+                    <div class="mb-3">
+                        <label for="produtoNome" class="form-label">Nome</label>
+                        <input type="text" class="form-control" id="produtoNome" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="produtoEstoque" class="form-label">Estoque</label>
+                        <input type="number" class="form-control" id="produtoEstoque" min="0" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Entrada/Saída -->
+<div class="modal fade" id="movimentoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="form-movimento">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalMovimentoTitulo">Entrada/Saída</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="movimentoId">
+                    <input type="hidden" id="movimentoTipo">
+                    <div class="mb-3">
+                        <label for="movimentoQuantidade" class="form-label">Quantidade</label>
+                        <input type="number" class="form-control" id="movimentoQuantidade" min="1" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="movimentoResponsavel" class="form-label">Responsável</label>
+                        <input type="text" class="form-control" id="movimentoResponsavel" required>
+                    </div>
+                    <div class="mb-3" id="divSolicitante">
+                        <label for="movimentoSolicitante" class="form-label">Solicitante</label>
+                        <input type="text" class="form-control" id="movimentoSolicitante">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Registrar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<style>
+    body {
+    background-color: gray;
+    color: black;
+}
+
+table, input, select, textarea {
+    background-color: #e0e0e0;
+    color: black;
+}
+
+.modal-content {
+    background-color: #d3d3d3;
+    color: black;
+}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const urlBase = "/estoca-ai/produtos";
+
+    async function listarProdutos() {
+        const response = await fetch(urlBase);
+        const produtos = await response.json();
+        const tbody = document.querySelector("#tabela-produtos tbody");
+        tbody.innerHTML = "";
+        produtos.forEach(p => {
+            tbody.innerHTML += `
+            <tr>
+                <td>${p.id}</td>
+                <td>${p.nome}</td>
+                <td>${p.estoque}</td>
+                <td>
+                    <button class="btn btn-sm btn-info" onclick="abrirModalEditar(${p.id}, '${p.nome}', ${p.estoque})">Editar</button>
+                    <button class="btn btn-sm btn-danger" onclick="deletarProduto(${p.id})">Deletar</button>
+                    <button class="btn btn-sm btn-success" onclick="abrirModalMovimento(${p.id}, 'entrada')">Entrada</button>
+                    <button class="btn btn-sm btn-warning" onclick="abrirModalMovimento(${p.id}, 'saida')">Saída</button>
+                </td>
+            </tr>`;
+        });
+    }
+
+    // Criar / Editar
+    function abrirModalCriar() {
+        document.getElementById("modalTitulo").innerText = "Criar Produto";
+        document.getElementById("produtoId").value = "";
+        document.getElementById("produtoNome").value = "";
+        document.getElementById("produtoEstoque").value = "";
+    }
+
+    function abrirModalEditar(id, nome, estoque) {
+        document.getElementById("modalTitulo").innerText = "Editar Produto";
+        document.getElementById("produtoId").value = id;
+        document.getElementById("produtoNome").value = nome;
+        document.getElementById("produtoEstoque").value = estoque;
+        new bootstrap.Modal(document.getElementById('produtoModal')).show();
+    }
+
+    document.getElementById("form-produto").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("produtoId").value;
+        const nome = document.getElementById("produtoNome").value;
+        const estoque = parseInt(document.getElementById("produtoEstoque").value);
+
+        let response;
+        if(id) {
+            response = await fetch(`${urlBase}/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome })
+            });
+        } else {
+            response = await fetch(urlBase, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nome, estoque })
+            });
+        }
+        listarProdutos();
+        bootstrap.Modal.getInstance(document.getElementById('produtoModal')).hide();
+    });
+
+    // Deletar
+    async function deletarProduto(id) {
+        await fetch(`${urlBase}/${id}`, { method: "DELETE" });
+        listarProdutos();
+    }
+
+    // Entrada / Saída
+    function abrirModalMovimento(id, tipo) {
+        document.getElementById("movimentoId").value = id;
+        document.getElementById("movimentoTipo").value = tipo;
+        document.getElementById("movimentoQuantidade").value = "";
+        document.getElementById("movimentoResponsavel").value = "";
+        const divSolicitante = document.getElementById("divSolicitante");
+        if(tipo === "entrada") {
+            divSolicitante.style.display = "none";
+        } else {
+            divSolicitante.style.display = "block";
+            document.getElementById("movimentoSolicitante").value = "";
+        }
+        new bootstrap.Modal(document.getElementById('movimentoModal')).show();
+    }
+
+    document.getElementById("form-movimento").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const id = document.getElementById("movimentoId").value;
+        const tipo = document.getElementById("movimentoTipo").value;
+        const quantidade = parseInt(document.getElementById("movimentoQuantidade").value);
+        const responsavel = document.getElementById("movimentoResponsavel").value;
+        const solicitante = document.getElementById("movimentoSolicitante").value;
+
+        let url = `${urlBase}/${id}/${tipo}?quantidade=${quantidade}&responsavel=${responsavel}`;
+        if(tipo === "saida") url += `&solicitante=${solicitante}`;
+
+        await fetch(url, { method: "PATCH" });
+        listarProdutos();
+        bootstrap.Modal.getInstance(document.getElementById('movimentoModal')).hide();
+    });
+
+    // Inicializa tabela
+    listarProdutos();
+</script>
+</body>
+</html>
