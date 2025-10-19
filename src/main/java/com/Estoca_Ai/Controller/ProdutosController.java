@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
-@RequestMapping("/Estoca-Ai")
+@RequestMapping("/estoca-ai")
 @RestController
 public class ProdutosController {
     private final ProdutoService produtoService;
@@ -24,36 +24,36 @@ public class ProdutosController {
             return produtoService.listarProdutos();
     }
 
-    @DeleteMapping("produtos/deletar-produto/{id}")
+    @DeleteMapping("produtos/{id}")
         public ResponseEntity<Produto> deletarProduto(@PathVariable Integer id){
             Produto deletado = produtoService.deletarProduto(id);
             return ResponseEntity.noContent().build();
         }
 
-    @PatchMapping("produtos/atualizar-produto/{id}")
+    @PatchMapping("produtos/{id}")
     public ResponseEntity<Produto> atualizarProduto(@PathVariable Integer id, @RequestBody Produto produto){
         Produto atualizado = produtoService.editarProduto(id, produto);
         return ResponseEntity.ok().body(atualizado);
     }
 
-    @PostMapping("/produtos/Criar-produto")
+    @PostMapping("/produtos")
     public ResponseEntity<Produto> criarProduto(@RequestBody Produto produto){
         Produto novoProduto = produtoService.criarProduto(produto);
         return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);
     }
 
-    @PatchMapping("/entrada")
+    @PatchMapping("produtos/{id}/entrada")
         public ResponseEntity<Produto> entradaProduto(
-                @RequestParam Long idProduto,
+                @PathVariable Long idProduto,
                 @RequestParam int quantidade,
                 @RequestParam String responsavel){
         Produto atualizado = produtoService.entradaProduto(idProduto, quantidade, responsavel);
         return ResponseEntity.ok().body(atualizado);
         }
 
-    @PatchMapping("/saida")
+    @PatchMapping("produtos/{id}/saida")
         public ResponseEntity<Produto> saidaProduto(
-                @RequestParam Long idProduto,
+                @PathVariable Long idProduto,
                 @RequestParam int quantidade,
                 @RequestParam String responsavel,
                 @RequestParam String solicitante){
